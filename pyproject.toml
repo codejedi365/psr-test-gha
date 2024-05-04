@@ -1,0 +1,57 @@
+[project]
+name = "hello-world"
+dynamic = ["version"]
+
+[project.optional-dependencies]
+build = [
+    "build",
+    "python-semantic-release ~= 8.0"
+]
+
+[build-system]
+requires = [
+    "setuptools",
+    "setuptools_scm",
+    "wheel"
+]
+build-backend = "setuptools.build_meta"
+
+
+[tool.setuptools]
+zip-safe = false
+include-package-data = true
+
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+
+[tool.setuptools_scm]
+write_to = "src/project/_version.py"
+write_to_template = '''
+from __future__ import annotations
+
+__version__: str = '{version}'
+__version_tuple__: tuple[int, ...] = {version_tuple}
+'''
+# using post-release scheme to clearly indicate current dev version
+# and to be compatible with semantic_release when building a distribution
+local_scheme = 'no-local-version'
+version_scheme = 'post-release'
+
+
+[tool.semantic_release]
+build_command = "bash scripts/build.sh"
+version_variables = ["src/project/_version.py:__version__"]
+
+[tool.semantic_release.changelog]
+exclude_commit_patterns = [
+  '''chore(?:\([^)]*?\))?: .+''',
+  '''ci(?:\([^)]*?\))?: .+''',
+  '''refactor(?:\([^)]*?\))?: .+''',
+  '''style(?:\([^)]*?\))?: .+''',
+  '''test(?:\([^)]*?\))?: .+''',
+  '''build\((?!deps\): .+)''',
+  '''Merged? .*''',
+  '''Initial Commit.*''',
+]

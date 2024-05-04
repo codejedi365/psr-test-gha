@@ -1,0 +1,54 @@
+name: Semantic Release
+
+on:
+  push:
+    branches:
+      - main
+
+
+# set default Token permissions (none)
+permissions: {}
+
+
+env:
+  PYTHON_VERSION: '3.12'
+
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    concurrency: release
+
+    # Set permissions explicitly, should flag when we try to do something that
+    # we have not documented as now required for psr
+    permissions:
+      id-token: write
+      contents: write
+
+    steps:
+      - name: Setup | Repo Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup | Python
+        uses: actions/setup-python@v5.1.0
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+
+      - name: Setup | Dependencies
+        # Required so that _version.py exists since setuptools_scm executed
+        run: |
+          python3 -m venv .venv
+          .venv/bin/pip install -U pip setuptools wheel
+          .venv/bin/pip install -e .
+
+      - name: Python Semantic Release
+        uses: codejedi365/python-semantic-release@fix/ci-action-committer
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          force: patch
+          root_options: -vv
+          git_committer_name: github-actions
+          git_committer_email: github-actions@github.com
+          vcs_release: false
