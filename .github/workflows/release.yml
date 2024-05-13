@@ -44,11 +44,14 @@ jobs:
           .venv/bin/pip install -e .
 
       - name: Python Semantic Release
-        uses: codejedi365/python-semantic-release@fix/ci-action-committer
+        uses: codejedi365/python-semantic-release@fix/build-cmd-env
+        env:
+          CI_JOB_ID: C00L-1234
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           force: patch
           root_options: -vv
+          commit: false
           git_committer_name: github-actions
           git_committer_email: github-actions@github.com
           vcs_release: false

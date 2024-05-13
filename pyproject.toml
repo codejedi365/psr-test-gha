@@ -5,7 +5,7 @@ dynamic = ["version"]
 [project.optional-dependencies]
 build = [
     "build",
-    "python-semantic-release ~= 8.0"
+    "python-semantic-release == 9.7.1"
 ]
 
 [build-system]
@@ -42,6 +42,11 @@ version_scheme = 'post-release'
 
 [tool.semantic_release]
 build_command = "bash scripts/build.sh"
+build_command_env = [
+    # pulled from #922
+    "APPLICATION_NAME=Magic Sauce",
+    "CI_JOB_ID",
+]
 version_variables = ["src/project/_version.py:__version__"]
 
 [tool.semantic_release.changelog]
